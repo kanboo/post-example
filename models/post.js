@@ -4,7 +4,7 @@ const postSchema = new mongoose.Schema(
   {
     userName: {
       type: String,
-      required: true
+      required: [true, '名稱必填']
     },
     userPhoto: {
       type: String,
@@ -12,7 +12,7 @@ const postSchema = new mongoose.Schema(
     },
     content: {
       type: String,
-      required: true
+      required: [true, '內容必填']
     }
   },
   {
