@@ -1,38 +1,14 @@
 const http = require('http')
 const mongoose = require('mongoose')
 const Post = require('./models/post')
+const { HEADER } = require('./constants')
+const { successResponse, errorResponse } = require('./responseHandle')
 
 require('dotenv').config()
 
 mongoose.connect(process.env.DB_CONNECT)
   .then(() => { console.log('DB connect ok') })
   .catch((e) => { console.error(e) })
-
-
-const HEADER = Object.freeze({
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization, Content-Length, X-Requested-With',
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'PATCH, POST, GET,OPTIONS,DELETE',
-  'Content-Type': 'application/json'
-})
-
-const successResponse = (res, statusCode, data) => {
-  res.writeHead(statusCode, HEADER)
-  res.write(JSON.stringify({
-    status: 'success',
-    data
-  }))
-  res.end()
-}
-
-const errorResponse = (res, statusCode, message) => {
-  res.writeHead(statusCode, HEADER)
-  res.write(JSON.stringify({
-    status: 'false',
-    message
-  }))
-  res.end()
-}
 
 const requestListener = async (req, res) => {
   let body = ''
