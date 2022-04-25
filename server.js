@@ -34,11 +34,17 @@ const requestListener = async (req, res) => {
     }
   } else if (req.url === '/posts' && req.method === 'POST') {
     try {
-      const content = JSON.parse(body)
-      await Post.create(content)
+      const parseBody = JSON.parse(body);
+      const { userName, userPhoto, content } = parseBody;
 
-      const posts = await Post.find()
-      successResponse(res, 200, posts)
+      if (!userName || !content) {
+        errorResponse(res, 400, "使用者名稱及內文需必填！");
+        return
+      }
+
+      await Post.create({ userName, userPhoto, content });
+      const posts = await Post.find();
+      successResponse(res, 200, posts);
     } catch (e) {
       console.error(e)
       errorResponse(res, 400, '建立 Post 有誤')
@@ -69,8 +75,15 @@ const requestListener = async (req, res) => {
   } else if (req.url.startsWith('/posts/') && req.method === 'PATCH') {
     try {
       const id = req.url.split('/').pop()
-      const content = JSON.parse(body)
-      const result = await Post.findByIdAndUpdate(id, content)
+      const parseBody = JSON.parse(body)
+      const { content } = parseBody;
+
+      if (!content) {
+        errorResponse(res, 400, "內文需必填！");
+        return
+      }
+
+      const result = await Post.findByIdAndUpdate(id, { content })
 
       if (result) {
         const posts = await Post.find()
